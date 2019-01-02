@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import ReactDOM from "react-dom";
 
 import MapContainer from "./components/MapContainer";
@@ -25,6 +25,12 @@ function mapStateToProps(state) {
 }
 
 class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      error: false
+    };
+  }
   componentDidMount() {
     const self = this;
     fetch("https://api.myjson.com/bins/hq9bo")
@@ -36,11 +42,24 @@ class App extends React.Component {
         self.props.initializeState(myJson);
       })
       .catch(e => {
-        console.log("error fetching===", e);
+        this.setState({
+          error: true
+        });
       });
   }
   render() {
     const { selectedNursery, nurseries, selectNursery } = this.props;
+    if (this.state.error) {
+      return (
+        <Fragment>
+          <h1>Sorry for the inconvenience.</h1>
+          <p>
+            There's been an error loading the data. Pleasecheck your internet
+            connection and reload
+          </p>
+        </Fragment>
+      );
+    }
     return (
       <div>
         <MapContainer
